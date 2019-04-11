@@ -1,5 +1,5 @@
 {
-  "name": "md-links",
+  "name": "md-links-emg",
   "version": "0.1.0",
   "description": "[Markdown](https://es.wikipedia.org/wiki/Markdown) es un lenguaje de marcado\r ligero muy popular entre developers. Es usado en muchísimas plataformas que\r manejan texto plano (GitHub, foros, blogs, ...), y es muy común\r encontrar varios archivos en ese formato en cualquier tipo de repositorio\r (empezando por el tradicional `README.md`).",
   "main": "index.js",
@@ -15,6 +15,9 @@
   },
   "author": "Elizabeth Monroy Gonzalez",
   "license": "ISC",
+  "bin": {
+    "md-links": "./cli.js"
+  },
   "bugs": {
     "url": "https://github.com/emonroy58/CDMX007-fe-md-links/issues"
   },
@@ -33,5 +36,8 @@
     "marked": "^0.6.1",
     "node-fetch": "^2.3.0",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "ed-grid": "^2.8.1"
   }
 }

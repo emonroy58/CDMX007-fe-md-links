@@ -3,20 +3,37 @@ const path = require('path');
 const fetch = require('node-fetch');
 let linksMd = [];
 
-  fs.readdirSync(process.argv[2],(err, archivos)=>{ //recibe ruta y callback  
-    archivos
-        .filter(function(archivo){return path.extname(archivo)==='.md'; })
-        .forEach(function(archivo){
-          console.log(archivo); 
-          readFile();
-          return archivo;
-          });
-  });
+let options = {
+  validate: false,
+  stats: false
+}
+
+
+const foo =()=> {
+return new Promise(function(resolve,reject){
+ fs.readdir(process.argv[2],(err, files)=>{
+    files.filter(file =>{
+     if (path.extname(file)==='.md'){
+      fs.readFile(file, 'utf-8', (err, content) => {
+        if (err) 
+           reject(err); 
+        else     
+        resolve (content);       
+      })
+     }   
+         
+    })
+   })  
+ })
+ .then (content => readFileMd(content) )
+}
+module.exports = foo();
+
 
 
 //Funcion que obtine links de .md
-const readFile= ()=> {   
-  const readFileMd= fs.readFileSync( 'readme.md', 'utf-8');   
+const readFileMd= (fileName)=> {
+  const readFileMd= fileName; 
   const RegExpLinkText = /!*\[(.*)\]\((.*)\)/gi;   
   let urlLinks = readFileMd.match(RegExpLinkText); 
   // console.log(urlLinks);      
@@ -28,9 +45,10 @@ const readFile= ()=> {
       href: urlLinkMd   
     });
   }
-  console.log(linksMd);
-  return linksMd; //array de objetos con los linksMd
+ // console.log(linksMd);
+ validateLinks(linksMd);//array de objetos con los linksMd
 }
+//module.exports = readFileMd();
 
 const validateLinks = () => {
   let arrLink = [];
@@ -38,33 +56,54 @@ const validateLinks = () => {
   arrayRead.forEach(element => {         
     fetch(element.href).then(response => {
         if (response.status >= 200 && response.status < 400) {
-          console.log(`Status:(ok)`);
+          console.log(`${element.href} => Status:(ok)`);
          arrLink.push({
-            status: `Status:(ok)`,            
+            ...element,
+            status: response.status,   
+            statusText: 'ok'       
           });
 
         } else {
-          console.log(`Status:FAIL`);
-          /*arrLink.push({
+          console.log(`${element.href} =>Status:FAIL`);
+          arrLink.push({
             ...element,
             status: response.status,
             statusText: 'FAIL'
-          });*/
+          });
 
         }
       })
       .catch(error => {
-        console.log(`Error: 404`);        
-       /* ...element,
+        console.log(`${element.href} =>Error: 404`); 
+        arrLink.push({       
+        ...element,
         status: 404,
-        statusText: 'FAIL'*/
+        statusText: 'FAIL'
+        });
       })
+      
   });
-
-  count = linksMd.length;
-  console.log(`${count} links rastreados`);
-  return arrLink;
+  statusLink(linksMd);
+ // count = linksMd.length;
+  //console.log(`${count} links rastreados`);
+ // return arrLink;
 };
+//module.exports = validateLinks();
 
-module.exports=readFile();
-module.exports=validateLinks();
+const statusLink= (arrLink)=>{  
+ 
+  console.log(`Total Links => ${arrLink.length}`); 
+    
+}
+
+const mdLinks = ( options) =>  {
+  if (options.stats && !options.validate) {
+   console.log(`Total Links => ${arrLink.length}`); 
+      } else if (options.validate && !options.stats) {
+        validateLinks();
+      } 
+    else {
+    reject(`La ruta no existe o es incorrecta`);
+  }
+}
+module.exports.mdLinks = mdLinks;
