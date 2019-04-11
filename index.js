@@ -98,7 +98,7 @@ const statusLink= (arrLink)=>{
 
 const mdLinks = ( options) =>  {
   if (options.stats && !options.validate) {
-   console.log(`Total Links => ${arrLink.length}`); 
+    console.log(`Total Links => ${arrLink.length}`); 
       } else if (options.validate && !options.stats) {
         validateLinks();
       } 

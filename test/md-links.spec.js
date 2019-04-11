@@ -1,10 +1,16 @@
 const mdLinks = require('../');
 
 
-describe('mdLinks', () => {
+describe('Verificar si es una funcion ', () => {
 
-  it('should...', () => {
-    console.log('FIX ME!');
+    test('Verificar si es una funcion ', () => {
+        expect(typeof readFileMd).toEqual('function');
+    });
+
+    test('mdLinks(path, options) para primer link del archivo', () => {
+        return mdLinks('valida link', { validate: false, stats: false })
+            .then(response => expect(response[1].href).toBe('https://nodejs.org/es/'));
+    });
+
+   
   });
-
-});
